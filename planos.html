@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SunshineChk - Planos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a192f, #1a365f);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(17, 34, 64, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            color: #64ffda;
+            font-weight: bold;
+        }
+
+        .navbar .menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .menu a:hover {
+            color: #64ffda;
+        }
+
+        .navbar .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .navbar .auth-buttons button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #64ffda, #1a365f);
+            color: #0a192f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .navbar .auth-buttons button:hover {
+            background: linear-gradient(135deg, #1a365f, #64ffda);
+            color: #ffffff;
+        }
+
+        .menu-icon {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64ffda;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-icon.active {
+            transform: rotate(90deg);
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(17, 34, 64, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            transition: top 0.5s ease-in-out;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-menu.active {
+            top: 70px;
+        }
+
+        .mobile-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+        }
+
+        .mobile-menu a svg {
+            width: 20px;
+            height: 20px;
+            fill: #64ffda;
+        }
+
+        .mobile-menu .auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mobile-menu .auth-buttons button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #64ffda, #1a365f);
+            color: #0a192f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu .auth-buttons button:hover {
+            background: linear-gradient(135deg, #1a365f, #64ffda);
+            color: #ffffff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 120px 20px 80px;
+            text-align: center;
+        }
+
+        .main-content h1 {
+            font-size: 2.5rem;
+            color: #64ffda;
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .plans-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            background: linear-gradient(145deg, #112240, #1a365f);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(100, 255, 218, 0.1), transparent 70%);
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .plan-card:hover::before {
+            opacity: 1;
+        }
+
+        .plan-title {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #64ffda;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .plan-title svg {
+            width: 24px;
+            height: 24px;
+            fill: #64ffda;
+        }
+
+        .plan-price {
+            font-size: 22px;
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .plan-price span {
+            font-size: 16px;
+            color: #a8b2d1;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .plan-features li {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #a8b2d1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .plan-features li svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+
+        .plan-features li .check-icon {
+            fill: #64ffda;
+        }
+
+        .plan-features li .times-icon {
+            fill: #ff6b6b;
+        }
+
+        .badge {
+            background-color: transparent;
+            border: 1px solid #28a745;
+            color: #28a745;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .not-included {
+            color: #ff6b6b;
+            text-decoration: line-through;
+        }
+
+        .plan-card .cta-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background: linear-gradient(135deg, #64ffda, #1a365f);
+            color: #0a192f;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card .cta-button:hover {
+            background: linear-gradient(135deg, #1a365f, #64ffda);
+            color: #ffffff;
+        }
+
+        .plan-card .cta-button:active {
+            transform: scale(0.95);
+        }
+
+        .plan-card .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .plan-card .cta-button:active::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(17, 34, 64, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .modal-content h2 {
+            font-size: 24px;
+            color: #64ffda;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-content h2 svg {
+            width: 24px;
+            height: 24px;
+            fill: #64ffda;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #a8b2d1;
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #64ffda, #1a365f);
+            color: #0a192f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background: linear-gradient(135deg, #1a365f, #64ffda);
+            color: #ffffff;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(17, 34, 64, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(100, 255, 218, 0.2);
+            margin-top: auto; /* Mantém o footer no final da página */
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+            color: #a8b2d1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar .menu {
+                display: none;
+            }
+
+            .navbar .auth-buttons {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            .main-content {
+                padding-top: 150px;
+            }
+
+            .plans-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">SunshineChk</div>
+        <div class="menu">
+            <a href="index.html">Início</a>
+            <a href="planos.html">Planos</a>
+        </div>
+        <div class="auth-buttons">
+            <button onclick="window.location.href='login.html'">Autenticar-se</button>
+            <button onclick="window.location.href='registro.html'">Registrar-se</button>
+        </div>
+        <div class="menu-icon" onclick="toggleMobileMenu()">☰</div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            Início
+        </a>
+        <a href="planos.html">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L2 22h20L12 2z"/>
+            </svg>
+            Planos
+        </a>
+        <div class="auth-buttons">
+            <button onclick="window.location.href='login.html'">Autenticar-se</button>
+            <button onclick="window.location.href='registro.html'">Registrar-se</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h1>Nossos Planos</h1>
+        <div class="plans-container">
+
+            <div class="plan-card">
+                <div class="plan-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2L2 22h20L12 2z"/>
+                    </svg>
+                    Bronze
+                </div>
+                <div class="plan-price">R$ 50 <span>/ por dia</span></div>
+                <ul class="plan-features">
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Acesso ilimitado aos checkers</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Suporte via Ticket exclusivo</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Compartilhamento de créditos disponíveis</li>
+                    <li class="not-included"><svg class="times-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>Escolha entre 3x a 9x de thrends simultâneos</li>
+                    <li class="not-included"><svg class="times-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>Acesso via API <span class="badge">Exclusivo Ouro</span></li>
+                    <li class="not-included"><svg class="times-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>Sistema de indicação <span class="badge">Exclusivo Ouro</span></li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Roletas e Caixas premiadas</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Revenda de Planos</li>
+                </ul>
+                <button class="cta-button" onclick="openModal('Bronze')">Assinar Plano</button>
+            </div>
+
+            <div class="plan-card">
+                <div class="plan-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2L2 22h20L12 2z"/>
+                    </svg>
+                    Prata
+                </div>
+                <div class="plan-price">R$ 250 <span>/ por semana</span></div>
+                <ul class="plan-features">
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Acesso ilimitado aos checkers</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Suporte via Ticket exclusivo</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Compartilhamento de créditos disponíveis</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Escolha entre 3x a 9x de thrends simultâneos</li>
+                    <li class="not-included"><svg class="times-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>Acesso via API <span class="badge">Exclusivo Ouro</span></li>
+                    <li class="not-included"><svg class="times-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>Sistema de indicação <span class="badge">Exclusivo Ouro</span></li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Roletas e Caixas premiadas</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Revenda de Planos</li>
+                </ul>
+                <button class="cta-button" onclick="openModal('Prata')">Assinar Plano</button>
+            </div>
+
+            <div class="plan-card">
+                <div class="plan-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2L2 22h20L12 2z"/>
+                    </svg>
+                    Ouro
+                </div>
+                <div class="plan-price">R$ 450 <span>/ por mês</span></div>
+                <ul class="plan-features">
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Acesso ilimitado aos checkers</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Suporte via Ticket exclusivo</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Compartilhamento de créditos disponíveis</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Escolha entre 3x a 9x de thrends simultâneos</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Acesso via API <span class="badge">Exclusivo</span></li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Sistema de indicação <span class="badge">Exclusivo</span></li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Roletas e Caixas premiadas</li>
+                    <li><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>Revenda de Planos</li>
+                </ul>
+                <button class="cta-button" onclick="openModal('Ouro')">Assinar Plano</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SunshineChk. Todos os direitos reservados.</p>
+    </footer>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2L2 22h20L12 2z"/>
+                </svg>
+                Assinar Plano <span id="plan-name"></span>
+            </h2>
+            <p id="modal-description">Você está prestes a assinar o plano selecionado. Confirme abaixo para prosseguir.</p>
+            <button onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(planName) {
+            const modal = document.getElementById('modal');
+            const planTitle = document.getElementById('plan-name');
+            planTitle.textContent = planName;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.querySelector('.menu-icon');
+            mobileMenu.classList.toggle('active');
+            menuIcon.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

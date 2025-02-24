@@ -1,0 +1,74 @@
+.toastr {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px 15px 50px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10000;
+    animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toastr::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    font-family: 'Material Icons';
+    font-size: 24px;
+    color: inherit;
+}
+
+.toastr.success {
+    background-color: rgba(40, 167, 69, 0.9);
+    border-color: rgba(40, 167, 69, 0.5);
+}
+
+.toastr.success::before {
+    content: 'check_circle';
+}
+
+.toastr.error {
+    background-color: rgba(220, 53, 69, 0.9);
+    border-color: rgba(220, 53, 69, 0.5);
+}
+
+.toastr.error::before {
+    content: 'error';
+}
+
+.toastr.warning {
+    background-color: rgba(255, 193, 7, 0.9);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #000000;
+}
+
+.toastr.warning::before {
+    content: 'warning';
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
